@@ -129,7 +129,7 @@ else if (!isset($data['post_data']['post_type']))
 		 */
 		public function filter_active_extensions($extensions, $set = FALSE)
 		{
-SyncDebug::log(__METHOD__.'()');
+//SyncDebug::log(__METHOD__.'()');
 			if ($set || $this->_license->check_license('sync_cpt', self::PLUGIN_KEY, self::PLUGIN_NAME))
 				$extensions['sync_cpt'] = array(
 					'name' => self::PLUGIN_NAME,
