@@ -80,8 +80,20 @@ if (!class_exists('WPSiteSyncCPT')) {
 			$cpts = get_post_types(array('_builtin' => FALSE));
 
 			// we can't handle products and downloads since these use custom tables anyway. remove them.
-			unset($cpts['products']);
-			unset($cpts['downloads']);
+			if (class_exists('WooCommerce', FALSE)) {
+				unset($cpts['product']);
+				unset($cpts['products']);
+				unset($cpts['product_variation']);
+			}
+			if (class_exists('Easy_Digital_Downloads', FALSE)) {
+				unset($cpts['downloads']);
+				unset($cpts['edd_discount']);
+				unset($cpts['edd_license']);
+				unset($cpts['edd_license_log']);
+				unset($cpts['edd_log']);
+				unset($cpts['edd_payment']);
+				unset($cpts['edd-checkout-fields']);
+			}
 			return array_merge($post_types, $cpts);
 		}
 
