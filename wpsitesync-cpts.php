@@ -2,10 +2,10 @@
 /*
 Plugin Name: WPSiteSync for Custom Post Types
 Plugin URI: http://wpsitesync.com
-Description: Allow custom post types to be Synced to the Ttarget site
+Description: Allow custom post types to be Synced to the Target site
 Author: WPSiteSync
 Author URI: http://wpsitesync.com
-Version: 1.0
+Version: 1.1
 Text Domain: wpsitesync-cpts
 
  * The PHP code portions are distributed under the GPL license. If not otherwise stated, all
