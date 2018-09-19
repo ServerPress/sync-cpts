@@ -23,14 +23,14 @@ if (!class_exists('WPSiteSyncCPT')) {
 		private static $_instance = NULL;
 
 		const PLUGIN_NAME = 'WPSiteSync for Custom Post Types';
-		const PLUGIN_VERSION = '1.0';
+		const PLUGIN_VERSION = '1.1';
 		const PLUGIN_KEY = '8ebc49045e348022083181d1460c221d';
 
 		private $_license = NULL;
 
 		private function __construct()
 		{
-			add_action('spectrom_sync_init', array(&$this, 'init'));
+			add_action('spectrom_sync_init', array($this, 'init'));
 		}
 
 		/*
@@ -49,7 +49,7 @@ if (!class_exists('WPSiteSyncCPT')) {
 		 */
 		public function init()
 		{
-			add_filter('spectrom_sync_active_extensions', array(&$this, 'filter_active_extensions'), 10, 2);
+			add_filter('spectrom_sync_active_extensions', array($this, 'filter_active_extensions'), 10, 2);
 
 			$this->_license = new SyncLicensing();
 			if (!$this->_license->check_license('sync_cpt', self::PLUGIN_KEY, self::PLUGIN_NAME))
@@ -61,10 +61,10 @@ if (!class_exists('WPSiteSyncCPT')) {
 				SyncCPTsAdmin::get_instance();
 			}
 
-			add_filter('spectrom_sync_allowed_post_types', array(&$this, 'allow_custom_post_types'));
+			add_filter('spectrom_sync_allowed_post_types', array($this, 'allow_custom_post_types'));
 			// use the 'spectrom_sync_api_request' filter to add any necessary taxonomy information
-//			add_filter('spectrom_sync_api_request', array(&$this, 'add_cpt_data'), 10, 3);
-			add_filter('spectrom_sync_tax_list', array(&$this, 'filter_taxonomies'), 10, 1);
+//			add_filter('spectrom_sync_api_request', array($this, 'add_cpt_data'), 10, 3);
+			add_filter('spectrom_sync_tax_list', array($this, 'filter_taxonomies'), 10, 1);
 		}
 
 		/**
