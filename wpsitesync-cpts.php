@@ -26,8 +26,6 @@ if (!class_exists('WPSiteSyncCPT')) {
 		const PLUGIN_VERSION = '1.1';
 		const PLUGIN_KEY = '8ebc49045e348022083181d1460c221d';
 
-		private $_license = NULL;
-
 		private function __construct()
 		{
 			add_action('spectrom_sync_init', array($this, 'init'));
@@ -51,9 +49,10 @@ if (!class_exists('WPSiteSyncCPT')) {
 		{
 			add_filter('spectrom_sync_active_extensions', array($this, 'filter_active_extensions'), 10, 2);
 
-			$this->_license = new SyncLicensing();
-			if (!$this->_license->check_license('sync_cpt', self::PLUGIN_KEY, self::PLUGIN_NAME))
+			if (!WPSiteSyncContent::get_instance()->get_license()->check_license('sync_cpt', self::PLUGIN_KEY, self::PLUGIN_NAME)) {
+SyncDebug::log(__METHOD__ . '() no license');
 				return;
+			}
 
 			if (is_admin() ||
 				(defined('DOING_AJAX') && DOING_AJAX)) {
@@ -74,7 +73,7 @@ if (!class_exists('WPSiteSyncCPT')) {
 		 */
 		public function allow_custom_post_types($post_types)
 		{
-			if (!$this->_license->check_license('sync_cpt', self::PLUGIN_KEY, self::PLUGIN_NAME))
+			if (!WPSiteSyncContent::get_instance()->get_license()->check_license('sync_cpt', self::PLUGIN_KEY, self::PLUGIN_NAME))
 				return $post_types;
 
 			$cpts = get_post_types(array('_builtin' => FALSE));
