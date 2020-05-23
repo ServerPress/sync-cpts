@@ -13,7 +13,6 @@ images, manuals, cascading stylesheets and included JavaScript are NOT GPL.
 */
 
 if (!class_exists('WPSiteSyncCPT')) {
-
 	/*
 	 * @package WPSiteSyncCPT
 	 * @author Dave Jesch
@@ -23,12 +22,13 @@ if (!class_exists('WPSiteSyncCPT')) {
 		private static $_instance = NULL;
 
 		const PLUGIN_NAME = 'WPSiteSync for Custom Post Types';
-		const PLUGIN_VERSION = '1.1';
+		const PLUGIN_VERSION = '1.1';	#@#
 		const PLUGIN_KEY = '8ebc49045e348022083181d1460c221d';
 
 		private function __construct()
 		{
 			add_action('spectrom_sync_init', array($this, 'init'));
+			add_action('wp_loaded', array($this, 'wp_loaded'));
 		}
 
 		/*
@@ -64,6 +64,51 @@ SyncDebug::log(__METHOD__ . '() no license');
 			// use the 'spectrom_sync_api_request' filter to add any necessary taxonomy information
 //			add_filter('spectrom_sync_api_request', array($this, 'add_cpt_data'), 10, 3);
 			add_filter('spectrom_sync_tax_list', array($this, 'filter_taxonomies'), 10, 1);
+		}
+
+		/**
+		 * Called when WP is loaded so we can check if parent plugin is active.
+		 */
+		public function wp_loaded()
+		{
+			if (is_admin() && !class_exists('WPSiteSyncContent', FALSE) && current_user_can('activate_plugins')) {
+				add_action('admin_notices', array($this, 'notice_requires_wpss'));
+				add_action('admin_init', array($this, 'disable_plugin'));
+			}
+		}
+
+		/**
+		 * Displays the warning message stating that WPSiteSync is not present.
+		 */
+		public function notice_requires_wpss()
+		{
+			$install = admin_url('plugin-install.php?tab=search&s=wpsitesync');
+			$activate = admin_url('plugins.php');
+			$msg = sprintf(__('The <em>WPSiteSync for Custom Post Types</em> plugin requires the main <em>WPSiteSync for Content</em> plugin to be installed and activated. Please %1$sclick here</a> to install or %2$sclick here</a> to activate.', 'wpsitesync-cpts'),
+						'<a href="' . $install . '">',
+						'<a href="' . $activate . '">');
+			$this->_show_notice($msg, 'notice-warning');
+		}
+
+		/**
+		 * Helper method to display notices
+		 * @param string $msg Message to display within notice
+		 * @param string $class The CSS class used on the <div> wrapping the notice
+		 * @param boolean $dismissable TRUE if message is to be dismissable; otherwise FALSE.
+		 */
+		private function _show_notice($msg, $class = 'notice-success', $dismissable = FALSE)
+		{
+			echo '<div class="notice ', $class, ' ', ($dismissable ? 'is-dismissible' : ''), '">';
+			echo '<p>', $msg, '</p>';
+			echo '</div>';
+		}
+
+		/**
+		 * Disables the plugin if WPSiteSync not installed or ACF is too old
+		 */
+		public function disable_plugin()
+		{
+			deactivate_plugins(plugin_basename(__FILE__));
 		}
 
 		/**
